@@ -38,7 +38,7 @@ public class TransactionController {
             @AuthenticationPrincipal UserPrincipal staff,
             @RequestBody SaleRequestDTO request
     ) {
-        // 🔐 derive kirana from STAFF identity (NOT request)
+        // 🔐 derive kirana from token
         String kiraanaId = staff.getUser().getKiraanaId();
 
         // validate or create customer
@@ -49,11 +49,15 @@ public class TransactionController {
                 )
                 .getId();
 
-        Long txId = transactionService
-                .createSaleTransaction(request, customerId);
+        Long txId = transactionService.createSaleTransaction(
+                request,
+                customerId,
+                kiraanaId
+        );
 
         return ResponseEntity.ok(Map.of("transactionId", txId));
     }
+
 
     /**
      * ADMIN only

@@ -5,15 +5,10 @@ import java.util.List;
 
 public class SaleRequestDTO {
 
-    private String kiraanaId;
     private CustomerRequestDTO customer;
     private List<ProductItemRequestDTO> items;
     private String currency;
     private double exchangeRate;
-
-    public String getKiraanaId() {
-        return kiraanaId;
-    }
 
     public CustomerRequestDTO getCustomer() {
         return customer;
@@ -29,10 +24,6 @@ public class SaleRequestDTO {
 
     public double getExchangeRate() {
         return exchangeRate;
-    }
-
-    public void setKiraanaId(String kiraanaId) {
-        this.kiraanaId = kiraanaId;
     }
 
     public void setCustomer(CustomerRequestDTO customer) {

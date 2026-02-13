@@ -24,4 +24,7 @@ public class InventoryDao {
     }
 
 
+    public void deleteById(Long id) {
+        inventoryRepository.deleteById(id);
+    }
 }

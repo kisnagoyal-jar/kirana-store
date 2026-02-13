@@ -1,33 +1,69 @@
 package com.kirana.kirana_register.service.helper.staff;
 
+import com.kirana.kirana_register.dao.mongodb.ProductDao;
+import com.kirana.kirana_register.dao.postgres.InventoryDao;
+import com.kirana.kirana_register.dto.request.CreateProductRequest;
 import com.kirana.kirana_register.entity.mongodb.Product;
 import com.kirana.kirana_register.entity.postgres.Inventory;
-import com.kirana.kirana_register.repository.mongodb.ProductRepository;
 import org.springframework.stereotype.Service;
 
 @Service
 public class ProductCreationService {
 
-    private final ProductRepository productRepository;
-    private final InventoryManagementService inventoryService;
+    private final InventoryDao inventoryDao;
+    private final ProductDao productDao;
 
-    public ProductCreationService(ProductRepository productRepository,
-                                    InventoryManagementService inventoryService) {
-        this.productRepository = productRepository;
-        this.inventoryService = inventoryService;
+    public ProductCreationService(
+            InventoryDao inventoryDao,
+            ProductDao productDao
+    ) {
+        this.inventoryDao = inventoryDao;
+        this.productDao = productDao;
     }
 
-    public Product createProduct(String kiraanaId,
-                                 String name,
-                                 int capacity, int price, int quantity) {
+    public String createProduct(
+            CreateProductRequest request,
+            String kiraanaId
+    ) {
 
-        Inventory inventory = inventoryService.createInventory(capacity,quantity);
+        // ✅ validations
+        if (request.getCapacity() <= 0) {
+            throw new IllegalArgumentException("Capacity must be positive");
+        }
 
-        Product product = new Product();
-        product.setKiraanaId(kiraanaId);
-        product.setProductName(name);
-        product.setInventoryId(inventory.getId());
+        if (request.getInitialQuantity() < 0) {
+            throw new IllegalArgumentException("Quantity cannot be negative");
+        }
 
-        return productRepository.save(product);
+        if (request.getInitialQuantity() > request.getCapacity()) {
+            throw new IllegalArgumentException(
+                    "Initial quantity cannot exceed capacity"
+            );
+        }
+
+        // 1️⃣ create inventory (Postgres)
+        Inventory inventory = new Inventory();
+        inventory.setCapacity(request.getCapacity());
+        inventory.setQuantity(request.getInitialQuantity());
+
+        inventory = inventoryDao.save(inventory);
+
+        try {
+            // 2️⃣ create product (MongoDB)
+            Product product = new Product();
+            product.setProductName(request.getProductName());
+            product.setPrice(request.getPrice());
+            product.setInventoryId(inventory.getId());
+            product.setKiraanaId(kiraanaId);
+
+            productDao.save(product);
+
+            return product.getId();
+
+        } catch (Exception ex) {
+            // 🔁 compensate
+            inventoryDao.deleteById(inventory.getId());
+            throw ex;
+        }
     }
 }

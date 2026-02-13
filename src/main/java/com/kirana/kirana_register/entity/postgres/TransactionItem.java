@@ -2,11 +2,15 @@ package com.kirana.kirana_register.entity.postgres;
 
 
 import jakarta.persistence.*;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 
 @Entity
 @Table(name="transaction_tems")
+@EntityListeners(AuditingEntityListener.class)
 public class TransactionItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,13 +32,10 @@ public class TransactionItem {
     @Column(nullable = false)
     private Double unitPrice;
 
-    @Column(nullable = false)
-    private LocalDateTime createdAt;
+    @Column(name = "created_at")
+    @CreatedDate
+    private Date createdAt;
 
-    @PrePersist
-    protected void onCreate() {
-        this.createdAt = LocalDateTime.now();
-    }
 
     public void setTransactionId(Long transactionId) {
         this.transactionId = transactionId;
@@ -81,7 +82,7 @@ public class TransactionItem {
         return unitPrice;
     }
 
-    public LocalDateTime getCreatedAt() {
+    public Date getCreatedAt() {
         return createdAt;
     }
 }

@@ -1,13 +1,15 @@
 package com.kirana.kirana_register.controller.admin;
 
-import com.kirana.kirana_register.dao.mongodb.ProductDao;
 import com.kirana.kirana_register.dto.request.CreateProductRequest;
-import com.kirana.kirana_register.entity.mongodb.Product;
 import com.kirana.kirana_register.security.UserPrincipal;
+import com.kirana.kirana_register.service.helper.staff.ProductCreationService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Map;
 
@@ -16,10 +18,10 @@ import java.util.Map;
 @PreAuthorize("hasRole('ADMIN')")
 public class ProductController {
 
-    private final ProductDao productDao;
+    private final ProductCreationService productCreationService;
 
-    public ProductController(ProductDao productDao) {
-        this.productDao = productDao;
+    public ProductController(ProductCreationService productCreationService) {
+        this.productCreationService = productCreationService;
     }
 
     @PostMapping
@@ -27,18 +29,15 @@ public class ProductController {
             @AuthenticationPrincipal UserPrincipal admin,
             @RequestBody CreateProductRequest request
     ) {
-        Product product = new Product();
-        product.setProductName(request.getProductName());
-        product.setPrice(request.getPrice());
-        product.setInventoryId(request.getInventoryId());
-        product.setKiraanaId(admin.getUser().getKiraanaId());
-
-        Product saved = productDao.save(product);
+        String productId = productCreationService.createProduct(
+                request,
+                admin.getUser().getKiraanaId()
+        );
 
         return ResponseEntity.ok(
                 Map.of(
-                        "productId", saved.getId(),
-                        "productName", saved.getProductName()
+                        "productId", productId,
+                        "status", "PRODUCT_CREATED"
                 )
         );
     }

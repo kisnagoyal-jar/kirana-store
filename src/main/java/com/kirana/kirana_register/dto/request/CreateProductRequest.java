@@ -4,7 +4,9 @@ public class CreateProductRequest {
 
     private String productName;
     private double price;
-    private Long inventoryId;
+
+    private int initialQuantity;
+    private int capacity;
 
     public String getProductName() {
         return productName;
@@ -14,8 +16,12 @@ public class CreateProductRequest {
         return price;
     }
 
-    public Long getInventoryId() {
-        return inventoryId;
+    public int getInitialQuantity() {
+        return initialQuantity;
+    }
+
+    public int getCapacity() {
+        return capacity;
     }
 
     public void setProductName(String productName) {
@@ -26,7 +32,11 @@ public class CreateProductRequest {
         this.price = price;
     }
 
-    public void setInventoryId(Long inventoryId) {
-        this.inventoryId = inventoryId;
+    public void setInitialQuantity(int initialQuantity) {
+        this.initialQuantity = initialQuantity;
+    }
+
+    public void setCapacity(int capacity) {
+        this.capacity = capacity;
     }
 }

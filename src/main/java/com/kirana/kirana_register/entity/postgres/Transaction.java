@@ -3,11 +3,16 @@ package com.kirana.kirana_register.entity.postgres;
 
 import com.kirana.kirana_register.enums.TransactionType;
 import jakarta.persistence.*;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 
 @Entity
 @Table(name="transactions")
+@EntityListeners(AuditingEntityListener.class)
 public class Transaction {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,13 +30,6 @@ public class Transaction {
     @Column(nullable = false)
     private double totalAmount;
 
-    @Column(nullable = false)
-    private String currency;
-
-    @Column(nullable = false)
-    private  double exchangeRate;
-
-
     @Column
     private Long originalTransactionId;
 
@@ -46,21 +44,16 @@ public class Transaction {
         isCompleted = completed;
     }
 
-    @Column(nullable = false)
-    private LocalDateTime createdAt;
+    @CreatedDate
+    @Column(name = "created_at")
+    private Date createdAt;
 
-    @Column(nullable = false)
-    private  LocalDateTime updatedAt;
+    @Column(name = "updated_at")
+    @LastModifiedDate
+    private Date updatedAt;
 
-    @PrePersist
-    protected void onCreate() {
-        this.createdAt = LocalDateTime.now();
-    }
 
-    @PreUpdate
-    protected void onUpdate() {
-        this.updatedAt = LocalDateTime.now();
-    }
+
 
     public void setKiraanaId(String kiraanaId) {
         this.kiraanaId = kiraanaId;
@@ -76,14 +69,6 @@ public class Transaction {
 
     public void setTotalAmount(double totalAmount) {
         this.totalAmount = totalAmount;
-    }
-
-    public void setCurrency(String currency) {
-        this.currency = currency;
-    }
-
-    public void setExchangeRate(double exchangeRate) {
-        this.exchangeRate = exchangeRate;
     }
 
     public void setOriginalTransactionId(Long originalTransactionId) {
@@ -111,23 +96,8 @@ public class Transaction {
         return totalAmount;
     }
 
-    public String getCurrency() {
-        return currency;
-    }
-
-    public double getExchangeRate() {
-        return exchangeRate;
-    }
-
     public Long getOriginalTransactionId() {
         return originalTransactionId;
     }
 
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
-    }
 }

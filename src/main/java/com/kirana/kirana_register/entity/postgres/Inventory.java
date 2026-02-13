@@ -2,11 +2,15 @@ package com.kirana.kirana_register.entity.postgres;
 
 
 import jakarta.persistence.*;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 
 @Entity
 @Table(name = "inventories")
+@EntityListeners(AuditingEntityListener.class)
 public class Inventory {
 
     @Id
@@ -16,16 +20,13 @@ public class Inventory {
     @Column(nullable = false)
     private int quantity;
 
-    @Column(nullable = false)
+    @Column
     private int capacity; // todo: capacity is fixed so how can we handle this ?
 
-    @Column(nullable = false)
-    private LocalDateTime updatedAt;
+    @LastModifiedDate
+    @Column(name = "updated_at")
+    private Date updatedAt;
 
-    @PreUpdate
-    protected void onUpdate() {
-        this.updatedAt = LocalDateTime.now();
-    }
 
     public void setQuantity(int quantity) {
         this.quantity = quantity;
@@ -48,7 +49,7 @@ public class Inventory {
         return capacity;
     }
 
-    public LocalDateTime getUpdatedAt() {
+    public Date getUpdatedAt() {
         return updatedAt;
     }
 }
