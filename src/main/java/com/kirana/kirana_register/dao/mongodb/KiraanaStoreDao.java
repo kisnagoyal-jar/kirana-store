@@ -18,4 +18,8 @@ public class KiraanaStoreDao {
     public Optional<KiraanaStore> findById(String id) {
         return kiraanaStoreRepository.findById(id);
     }
+
+    public KiraanaStore save(KiraanaStore kirana) {
+        return kiraanaStoreRepository.save(kirana);
+    }
 }

@@ -35,6 +35,9 @@ public class UserDao {
         return userRepository.existsByRole(role);
     }
 
+    public boolean existsByPhoneNumber(String adminPhone) {
+        return userRepository.existsByPhoneNumber(adminPhone);
+    }
 }
 
 
