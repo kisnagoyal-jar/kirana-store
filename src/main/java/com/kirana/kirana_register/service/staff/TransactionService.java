@@ -1,4 +1,4 @@
-package com.kirana.kirana_register.service.helper.staff;
+package com.kirana.kirana_register.service.staff;
 
 import com.kirana.kirana_register.dao.mongodb.ProductDao;
 import com.kirana.kirana_register.dao.postgres.InventoryDao;
@@ -11,6 +11,7 @@ import com.kirana.kirana_register.entity.postgres.Inventory;
 import com.kirana.kirana_register.entity.postgres.Transaction;
 import com.kirana.kirana_register.entity.postgres.TransactionItem;
 import com.kirana.kirana_register.enums.TransactionType;
+import com.kirana.kirana_register.service.helper.CurrencyRateService;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
@@ -23,17 +24,21 @@ public class TransactionService {
     private final TransactionItemDao transactionItemDao;
     private final InventoryDao inventoryDao;
     private final ProductDao productDao;
+    private final CurrencyRateService currencyRateService;
+
+
 
     public TransactionService(
             TransactionDao transactionDao,
             TransactionItemDao transactionItemDao,
             InventoryDao inventoryDao,
-            ProductDao productDao
+            ProductDao productDao, CurrencyRateService currencyRateService
     ) {
         this.transactionDao = transactionDao;
         this.transactionItemDao = transactionItemDao;
         this.inventoryDao = inventoryDao;
         this.productDao = productDao;
+        this.currencyRateService = currencyRateService;
     }
 
     // ================= SALE =================
@@ -55,7 +60,7 @@ public class TransactionService {
 
         tx = transactionDao.save(tx);
 
-        double total = 0;
+        double totalUsd = 0;
 
         // 2️⃣ Process each product
         for (ProductItemRequestDTO item : request.getItems()) {
@@ -95,11 +100,14 @@ public class TransactionService {
 
             transactionItemDao.save(txItem);
 
-            total += product.getPrice() * item.getQuantity();
+            totalUsd += product.getPrice() * item.getQuantity();
         }
 
         // 5️⃣ Finalize transaction
-        tx.setTotalAmount(total * request.getExchangeRate());
+        double usdToInrRate = currencyRateService.getUsdToInrRate();
+        double totalInr = totalUsd * usdToInrRate;
+
+        tx.setTotalAmount(totalInr);
         tx.setCompleted(true);
         transactionDao.save(tx);
 

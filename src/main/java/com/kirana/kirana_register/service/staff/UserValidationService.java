@@ -1,4 +1,4 @@
-package com.kirana.kirana_register.service.helper.staff;
+package com.kirana.kirana_register.service.staff;
 
 import com.kirana.kirana_register.dao.mongodb.UserDao;
 import com.kirana.kirana_register.dto.mongodb.CustomerRequestDTO;

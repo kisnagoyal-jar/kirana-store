@@ -1,4 +1,4 @@
-package com.kirana.kirana_register.service.helper.staff;
+package com.kirana.kirana_register.service.staff;
 
 import com.kirana.kirana_register.entity.mongodb.Product;
 import com.kirana.kirana_register.repository.mongodb.ProductRepository;

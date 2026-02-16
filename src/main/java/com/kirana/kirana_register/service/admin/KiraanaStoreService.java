@@ -1,4 +1,4 @@
-package com.kirana.kirana_register.service.helper.admin;
+package com.kirana.kirana_register.service.admin;
 
 import com.kirana.kirana_register.entity.mongodb.KiraanaStore;
 import com.kirana.kirana_register.entity.mongodb.User;

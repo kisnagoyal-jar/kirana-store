@@ -1,4 +1,4 @@
-package com.kirana.kirana_register.service.helper.staff;
+package com.kirana.kirana_register.service.staff;
 
 import com.kirana.kirana_register.dao.postgres.InventoryDao;
 import com.kirana.kirana_register.entity.postgres.Inventory;

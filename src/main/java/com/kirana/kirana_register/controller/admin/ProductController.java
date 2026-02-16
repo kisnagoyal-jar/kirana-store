@@ -2,7 +2,7 @@ package com.kirana.kirana_register.controller.admin;
 
 import com.kirana.kirana_register.dto.request.CreateProductRequest;
 import com.kirana.kirana_register.security.UserPrincipal;
-import com.kirana.kirana_register.service.helper.staff.ProductCreationService;
+import com.kirana.kirana_register.service.staff.ProductCreationService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;

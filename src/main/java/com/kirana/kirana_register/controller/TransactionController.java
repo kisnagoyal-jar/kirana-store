@@ -2,8 +2,8 @@ package com.kirana.kirana_register.controller;
 
 import com.kirana.kirana_register.dto.request.SaleRequestDTO;
 import com.kirana.kirana_register.security.UserPrincipal;
-import com.kirana.kirana_register.service.helper.staff.TransactionService;
-import com.kirana.kirana_register.service.helper.staff.UserValidationService;
+import com.kirana.kirana_register.service.staff.TransactionService;
+import com.kirana.kirana_register.service.staff.UserValidationService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
