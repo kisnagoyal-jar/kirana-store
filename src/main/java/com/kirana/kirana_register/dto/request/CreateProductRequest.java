@@ -1,5 +1,15 @@
 package com.kirana.kirana_register.dto.request;
 
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Setter
+@Getter
+@NoArgsConstructor
+@AllArgsConstructor
 public class CreateProductRequest {
 
     private String productName;
@@ -8,35 +18,4 @@ public class CreateProductRequest {
     private int initialQuantity;
     private int capacity;
 
-    public String getProductName() {
-        return productName;
-    }
-
-    public double getPrice() {
-        return price;
-    }
-
-    public int getInitialQuantity() {
-        return initialQuantity;
-    }
-
-    public int getCapacity() {
-        return capacity;
-    }
-
-    public void setProductName(String productName) {
-        this.productName = productName;
-    }
-
-    public void setPrice(double price) {
-        this.price = price;
-    }
-
-    public void setInitialQuantity(int initialQuantity) {
-        this.initialQuantity = initialQuantity;
-    }
-
-    public void setCapacity(int capacity) {
-        this.capacity = capacity;
-    }
 }

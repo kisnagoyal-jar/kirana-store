@@ -1,32 +1,19 @@
 package com.kirana.kirana_register.dto.request;
 
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@AllArgsConstructor
+@Getter
+@NoArgsConstructor
+@Setter
 public class CreateStaffRequest {
 
     private String name;
     private String phoneNumber;
     private String password;
 
-    public String getName() {
-        return name;
-    }
-
-    public String getPhoneNumber() {
-        return phoneNumber;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
 }
