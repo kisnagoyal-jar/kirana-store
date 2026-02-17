@@ -1,0 +1,80 @@
+package com.kirana.kirana_register.security;
+
+import com.kirana.kirana_register.entity.mongodb.User;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
+import java.util.Collection;
+import java.util.List;
+
+public class UserPrincipal implements UserDetails {
+
+    private final User user;
+
+    public UserPrincipal(User user) {
+        this.user = user;
+    }
+
+    public String getUserId() {
+        return user.getId();
+    }
+
+    public String getKiranaId() {
+        return user.getKiranaId();
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public String getRole() {
+        return user.getRole().name();
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(
+                new SimpleGrantedAuthority("ROLE_" + user.getRole().name())
+        );
+    }
+
+
+    @Override
+    public String getPassword() {
+        return user.getPassword();
+    }
+
+    @Override
+    public String getUsername() {
+        return user.getPhoneNumber();
+    }
+
+    @Override
+    public boolean isAccountNonExpired() { return true; }
+
+    @Override
+    public boolean isAccountNonLocked() { return true; }
+
+    @Override
+    public boolean isCredentialsNonExpired() { return true; }
+
+    @Override
+    public boolean isEnabled() { return true; }
+
+    public static UserPrincipal fromSession(
+            String userId,
+            String phone,
+            String role
+    ) {
+        User user = new User();
+        user.setId(userId);
+        user.setPhoneNumber(phone);
+        user.setRole(Enum.valueOf(
+                com.kirana.kirana_register.enums.Roles.class,
+                role
+        ));
+        return new UserPrincipal(user);
+    }
+
+}
