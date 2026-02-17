@@ -4,6 +4,7 @@ import com.kirana.kirana_register.entity.mongodb.Product;
 import com.kirana.kirana_register.repository.mongodb.ProductRepository;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Optional;
 
 @Component
@@ -15,14 +16,18 @@ public class ProductDao {
         this.productRepository = productRepository;
     }
 
-    public Optional<Product> findByIdAndKiraanaId(
+    public Optional<Product> findByIdAndKiranaId(
             String productId,
-            String kiraanaId
+            String kiranaId
     ) {
-        return productRepository.findByIdAndKiraanaId(productId, kiraanaId);
+        return productRepository.findByIdAndKiranaId(productId, kiranaId);
     }
 
     public Product save(Product product) {
         return productRepository.save(product);
+    }
+
+    public List<Product> findByKiranaId(String kiranaId) {
+        return productRepository.findByKiranaId(kiranaId);
     }
 }

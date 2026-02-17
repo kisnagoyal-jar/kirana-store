@@ -1,4 +1,4 @@
-package com.kirana.kirana_register.service.staff;
+package com.kirana.kirana_register.service;
 
 import com.kirana.kirana_register.dao.postgres.InventoryDao;
 import com.kirana.kirana_register.entity.postgres.Inventory;
@@ -14,7 +14,7 @@ public class InventoryManagementService {
         this.inventoryDao = inventoryDao;
     }
 
-    public void reduceStock(Long inventoryId, int quantity) {
+    public void reduceStock(String inventoryId, int quantity) {
 
         Inventory inventory =inventoryDao
                 .findById(inventoryId)

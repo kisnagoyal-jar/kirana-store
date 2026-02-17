@@ -19,7 +19,7 @@ public class TransactionDao {
         return transactionRepository.save(transaction);
     }
 
-    public Optional<Transaction> findById(Long originalTransactionId) {
+    public Optional<Transaction> findById(String originalTransactionId) {
         return transactionRepository.findById(originalTransactionId);
     }
 }

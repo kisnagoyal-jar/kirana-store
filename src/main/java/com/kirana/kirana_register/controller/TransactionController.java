@@ -1,9 +1,11 @@
 package com.kirana.kirana_register.controller;
 
 import com.kirana.kirana_register.dto.request.SaleRequestDTO;
+import com.kirana.kirana_register.dto.response.TransactionResponseDTO;
 import com.kirana.kirana_register.security.UserPrincipal;
-import com.kirana.kirana_register.service.staff.TransactionService;
-import com.kirana.kirana_register.service.staff.UserValidationService;
+import com.kirana.kirana_register.service.CurrentUserService;
+import com.kirana.kirana_register.service.SaleService;
+import com.kirana.kirana_register.service.TransactionService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -19,14 +21,16 @@ import java.util.Map;
 public class TransactionController {
 
     private final TransactionService transactionService;
-    private final UserValidationService userValidationService;
+    private final SaleService saleService;
+    private final CurrentUserService currentUserService;
 
     public TransactionController(
             TransactionService transactionService,
-            UserValidationService userValidationService
+            SaleService saleService, CurrentUserService currentUserService
     ) {
         this.transactionService = transactionService;
-        this.userValidationService = userValidationService;
+        this.saleService = saleService;
+        this.currentUserService = currentUserService;
     }
 
     /**
@@ -34,28 +38,12 @@ public class TransactionController {
      */
     @PostMapping("/sale")
     @PreAuthorize("hasAnyRole('STAFF','ADMIN')")
-    public ResponseEntity<?> sale(
-            @AuthenticationPrincipal UserPrincipal staff,
+    public ResponseEntity<TransactionResponseDTO> sale(
             @RequestBody SaleRequestDTO request
     ) {
-        // 🔐 derive kirana from token
-        String kiraanaId = staff.getUser().getKiraanaId();
-
-        // validate or create customer
-        String customerId = userValidationService
-                .getOrCreateCustomer(
-                        request.getCustomer(),
-                        kiraanaId
-                )
-                .getId();
-
-        Long txId = transactionService.createSaleTransaction(
-                request,
-                customerId,
-                kiraanaId
+        return ResponseEntity.ok(
+                saleService.createSaleTransaction(request)
         );
-
-        return ResponseEntity.ok(Map.of("transactionId", txId));
     }
 
 
@@ -65,15 +53,15 @@ public class TransactionController {
     @PostMapping("/refund")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> refund(
-            @AuthenticationPrincipal UserPrincipal admin,
-            @RequestBody Map<String, Long> body
+            @RequestBody Map<String, String> body
     ) {
-        Long originalTransactionId = body.get("originalTransactionId");
-        String kiraanaId = admin.getUser().getKiraanaId();
+        UserPrincipal admin = currentUserService.getCurrentUser();
+        String originalTransactionId = body.get("originalTransactionId");
+        String kiranaId = admin.getUser().getKiranaId();
 
-        Long refundTxId = transactionService.createRefundTransaction(
+        String refundTxId = transactionService.createRefundTransaction(
                 originalTransactionId,
-                kiraanaId
+                kiranaId
         );
 
         return ResponseEntity.ok(

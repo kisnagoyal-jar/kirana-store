@@ -15,7 +15,7 @@ public class InventoryDao {
         this.inventoryRepository = inventoryRepository;
     }
 
-    public Optional<Inventory> findById(Long inventoryId) {
+    public Optional<Inventory> findById(String inventoryId) {
         return inventoryRepository.findById(inventoryId);
     }
 
@@ -24,7 +24,7 @@ public class InventoryDao {
     }
 
 
-    public void deleteById(Long id) {
+    public void deleteById(String id) {
         inventoryRepository.deleteById(id);
     }
 }

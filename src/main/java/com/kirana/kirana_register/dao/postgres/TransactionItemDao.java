@@ -19,7 +19,7 @@ public class TransactionItemDao {
         return transactionItemRepository.save(item);
     }
 
-    public List<TransactionItem> findByTransactionId(Long transactionId) {
+    public List<TransactionItem> findByTransactionId(String transactionId) {
         return transactionItemRepository.findByTransactionId(transactionId);
     }
 }

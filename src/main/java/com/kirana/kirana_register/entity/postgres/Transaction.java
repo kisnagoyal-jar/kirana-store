@@ -1,6 +1,7 @@
 package com.kirana.kirana_register.entity.postgres;
 
 
+import com.github.f4b6a3.ulid.UlidCreator;
 import com.kirana.kirana_register.enums.TransactionType;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -21,25 +22,25 @@ import java.util.Date;
 @NoArgsConstructor
 public class Transaction {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Column(length = 26, nullable = false, updatable = false)
+    private String id;
 
-    @Column(name = "kiraana_id", nullable = false)
-    private String kiraanaId;
+    @Column(name = "kirana_id", nullable = false)
+    private String kiranaId;
 
-    @Column(nullable = false)
+    @Column(name = "user_id", nullable = false)
     private String userId;
 
     @Column(nullable = false)
     private TransactionType type;
 
-    @Column(nullable = false)
+    @Column(name = "total_amount", nullable = false)
     private double totalAmount;
 
-    @Column
-    private Long originalTransactionId;
+    @Column(name = "original_transaction_id")
+    private String originalTransactionId;
 
-    @Column
+    @Column(name = "is_completed")
     private boolean isCompleted;
 
     @CreatedDate
@@ -49,5 +50,11 @@ public class Transaction {
     @Column(name = "updated_at")
     @LastModifiedDate
     private Date updatedAt;
+
+    @PrePersist
+    public void generateId(){
+        this.id = UlidCreator.getUlid().toString();
+    }
+
 
 }

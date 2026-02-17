@@ -1,8 +1,10 @@
 package com.kirana.kirana_register.security.jwt;
 
+import com.kirana.kirana_register.entity.mongodb.User;
 import com.kirana.kirana_register.security.CustomUserDetailsService;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -42,9 +44,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
                 String phoneNumber = jwtUtil.getPhoneNumber(token);
 
-                var userDetails = userDetailsService.loadUserByUsername(phoneNumber);
+                UserDetails userDetails = userDetailsService.loadUserByUsername(phoneNumber);
 
-                var authentication = new UsernamePasswordAuthenticationToken(
+                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
                         userDetails,
                         null,
                         userDetails.getAuthorities()

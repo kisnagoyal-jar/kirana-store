@@ -9,6 +9,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Date;
 
@@ -21,8 +22,8 @@ public class Product {
     @Id
     private String id;
 
-    private String kiraanaId;
-    private Long inventoryId;
+    private String kiranaId;
+    private String inventoryId;
     private String productName;
 
     // all prices are stored in USD for consistency, conversion is done at the service layer

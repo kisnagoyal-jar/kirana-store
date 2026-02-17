@@ -1,6 +1,5 @@
 package com.kirana.kirana_register.dto.request;
 
-import com.kirana.kirana_register.dto.mongodb.CustomerRequestDTO;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,7 +14,7 @@ import java.util.List;
 @AllArgsConstructor
 public class SaleRequestDTO {
 
-    private CustomerRequestDTO customer;
+    private UserRequestDTO customer;
     private List<ProductItemRequestDTO> items;
     private String currency;
     private double exchangeRate;

@@ -1,37 +1,36 @@
-package com.kirana.kirana_register.controller.admin;
+package com.kirana.kirana_register.controller;
 
 import com.kirana.kirana_register.dto.request.CreateProductRequest;
+import com.kirana.kirana_register.entity.mongodb.Product;
 import com.kirana.kirana_register.security.UserPrincipal;
-import com.kirana.kirana_register.service.staff.ProductCreationService;
+import com.kirana.kirana_register.service.ProductService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 @RestController
 @RequestMapping("/admin/products")
-@PreAuthorize("hasRole('ADMIN')")
 public class ProductController {
 
-    private final ProductCreationService productCreationService;
+    private final ProductService productService;
 
-    public ProductController(ProductCreationService productCreationService) {
-        this.productCreationService = productCreationService;
+    public ProductController(ProductService productService) {
+        this.productService = productService;
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> createProduct(
             @AuthenticationPrincipal UserPrincipal admin,
             @RequestBody CreateProductRequest request
     ) {
-        String productId = productCreationService.createProduct(
+        String productId = productService.createProduct(
                 request,
-                admin.getUser().getKiraanaId()
+                admin.getUser().getKiranaId()
         );
 
         return ResponseEntity.ok(
@@ -40,5 +39,11 @@ public class ProductController {
                         "status", "PRODUCT_CREATED"
                 )
         );
+    }
+
+    // TODO: I will implement pagination
+    @GetMapping("{kiranaId}")
+    public List<Product> getAllProductsForKiraana(@PathVariable String kiraanaId) {
+        return productService.getProductsForKiraana(kiraanaId);
     }
 }

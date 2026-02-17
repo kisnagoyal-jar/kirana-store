@@ -20,6 +20,10 @@ public class UserPrincipal implements UserDetails {
         return user.getId();
     }
 
+    public String getKiranaId() {
+        return user.getKiranaId();
+    }
+
     public User getUser() {
         return user;
     }

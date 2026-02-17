@@ -1,4 +1,4 @@
-package com.kirana.kirana_register.service.staff;
+package com.kirana.kirana_register.service;
 
 import com.kirana.kirana_register.dao.mongodb.ProductDao;
 import com.kirana.kirana_register.dao.postgres.InventoryDao;
@@ -7,13 +7,15 @@ import com.kirana.kirana_register.entity.mongodb.Product;
 import com.kirana.kirana_register.entity.postgres.Inventory;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
-public class ProductCreationService {
+public class ProductService {
 
     private final InventoryDao inventoryDao;
     private final ProductDao productDao;
 
-    public ProductCreationService(
+    public ProductService(
             InventoryDao inventoryDao,
             ProductDao productDao
     ) {
@@ -23,7 +25,7 @@ public class ProductCreationService {
 
     public String createProduct(
             CreateProductRequest request,
-            String kiraanaId
+            String kiranaId
     ) {
 
         // ✅ validations
@@ -54,7 +56,7 @@ public class ProductCreationService {
             product.setProductName(request.getProductName());
             product.setPrice(request.getPrice());
             product.setInventoryId(inventory.getId());
-            product.setKiraanaId(kiraanaId);
+            product.setKiranaId(kiranaId);
 
             productDao.save(product);
 
@@ -65,5 +67,9 @@ public class ProductCreationService {
             inventoryDao.deleteById(inventory.getId());
             throw ex;
         }
+    }
+
+    public List<Product> getProductsForKiraana(String kiranaId) {
+        return productDao.findByKiranaId(kiranaId);
     }
 }

@@ -1,4 +1,4 @@
-package com.kirana.kirana_register.service.staff;
+package com.kirana.kirana_register.service.validationServices;
 
 import com.kirana.kirana_register.entity.mongodb.Product;
 import com.kirana.kirana_register.repository.mongodb.ProductRepository;
@@ -13,10 +13,10 @@ public class ProductValidationService {
         this.productRepository = productRepository;
     }
 
-    public Product validateProduct(String productId,String kiraanaId) {
+    public void validateProduct(String productId,String kiranaId) {
 
         Product product = productRepository
-                .findByIdAndKiraanaId(productId, kiraanaId)
+                .findByIdAndKiranaId(productId, kiranaId)
                 .orElseThrow(() ->
                         new IllegalStateException(
                                 "Product not found for this kirana"
@@ -26,7 +26,5 @@ public class ProductValidationService {
         if (product.getInventoryId() == null) {
             throw new IllegalStateException("Product has no inventory");
         }
-
-        return product;
     }
 }

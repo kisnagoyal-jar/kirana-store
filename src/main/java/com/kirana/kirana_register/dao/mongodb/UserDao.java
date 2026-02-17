@@ -16,11 +16,11 @@ public class UserDao {
         this.userRepository = userRepository;
     }
 
-    public Optional<User> findByPhoneNumberAndKiraanaId(
+    public Optional<User> findByPhoneNumberAndKiranaId(
             String phoneNumber,
-            String kiraanaId
+            String kiranaId
     ) {
-        return userRepository.findByPhoneNumberAndKiraanaId(phoneNumber, kiraanaId);
+        return userRepository.findByPhoneNumberAndKiranaId(phoneNumber, kiranaId);
     }
 
     public User save(User user) {
@@ -31,12 +31,8 @@ public class UserDao {
         return userRepository.findByPhoneNumber(phoneNumber);
     }
 
-    public boolean existsByRole(Roles role){
-        return userRepository.existsByRole(role);
-    }
-
-    public boolean existsByPhoneNumber(String adminPhone) {
-        return userRepository.existsByPhoneNumber(adminPhone);
+    public Optional<User> findById(String userId) {
+        return userRepository.findById(userId);
     }
 }
 

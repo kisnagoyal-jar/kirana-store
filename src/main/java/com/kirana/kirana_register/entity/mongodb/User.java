@@ -21,7 +21,8 @@ import java.time.LocalDateTime;
 public class User {
     @Id
     private String id;
-    private String kiraanaId;
+
+    private String kiranaId;
     private String name;
 
     @Indexed(unique = true)

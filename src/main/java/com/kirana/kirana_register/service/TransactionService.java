@@ -1,4 +1,4 @@
-package com.kirana.kirana_register.service.staff;
+package com.kirana.kirana_register.service;
 
 import com.kirana.kirana_register.dao.mongodb.ProductDao;
 import com.kirana.kirana_register.dao.postgres.InventoryDao;
@@ -6,6 +6,7 @@ import com.kirana.kirana_register.dao.postgres.TransactionDao;
 import com.kirana.kirana_register.dao.postgres.TransactionItemDao;
 import com.kirana.kirana_register.dto.request.ProductItemRequestDTO;
 import com.kirana.kirana_register.dto.request.SaleRequestDTO;
+import com.kirana.kirana_register.dto.response.TransactionResponseDTO;
 import com.kirana.kirana_register.entity.mongodb.Product;
 import com.kirana.kirana_register.entity.postgres.Inventory;
 import com.kirana.kirana_register.entity.postgres.Transaction;
@@ -15,6 +16,7 @@ import com.kirana.kirana_register.service.helper.CurrencyRateService;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Service
@@ -44,15 +46,15 @@ public class TransactionService {
     // ================= SALE =================
 
     @Transactional
-    public Long createSaleTransaction(
+    public TransactionResponseDTO createSaleTransaction(
             SaleRequestDTO request,
             String customerId,
-            String kiraanaId
+            String kiranaId
     ) {
 
         // 1️⃣ Create transaction shell
         Transaction tx = new Transaction();
-        tx.setKiraanaId(kiraanaId);
+        tx.setKiranaId(kiranaId);
         tx.setUserId(customerId);
         tx.setType(TransactionType.SALE);
         tx.setTotalAmount(0);
@@ -61,13 +63,14 @@ public class TransactionService {
         tx = transactionDao.save(tx);
 
         double totalUsd = 0;
+        double usdToInrRate = currencyRateService.getUsdToInrRate();
 
         // 2️⃣ Process each product
         for (ProductItemRequestDTO item : request.getItems()) {
 
             // 🔐 Product must belong to same kirana
             Product product = productDao
-                    .findByIdAndKiraanaId(item.getProductId(), kiraanaId)
+                    .findByIdAndKiranaId(item.getProductId(), kiranaId)
                     .orElseThrow(() ->
                             new IllegalStateException("Product not found")
                     );
@@ -96,30 +99,39 @@ public class TransactionService {
             txItem.setProductId(item.getProductId());
             txItem.setProductName(product.getProductName());
             txItem.setQuantity(item.getQuantity());
-            txItem.setUnitPrice(product.getPrice());
+            txItem.setUnitPrice(product.getPrice()* usdToInrRate); // store price in INR for transaction item
 
             transactionItemDao.save(txItem);
 
-            totalUsd += product.getPrice() * item.getQuantity();
+            totalUsd += product.getPrice();
         }
 
         // 5️⃣ Finalize transaction
-        double usdToInrRate = currencyRateService.getUsdToInrRate();
+
         double totalInr = totalUsd * usdToInrRate;
 
         tx.setTotalAmount(totalInr);
         tx.setCompleted(true);
         transactionDao.save(tx);
 
-        return tx.getId();
+        return createTransactionResponseDTO(tx);
+    }
+
+    private TransactionResponseDTO createTransactionResponseDTO(Transaction tx) {
+        return new TransactionResponseDTO(
+                tx.getId(),
+                "SUCCESS",
+                "Transaction completed successfully",
+                tx.getTotalAmount()
+        );
     }
 
     // ================= REFUND =================
 
     @Transactional
-    public Long createRefundTransaction(
-            Long originalTransactionId,
-            String kiraanaId
+    public String createRefundTransaction(
+            String originalTransactionId,
+            String kiranaId
     ) {
 
         // 1️⃣ Fetch original transaction
@@ -130,7 +142,7 @@ public class TransactionService {
                 );
 
         // 🔐 Ensure same kirana
-        if (!originalTx.getKiraanaId().equals(kiraanaId)) {
+        if (!originalTx.getKiranaId().equals(kiranaId)) {
             throw new IllegalStateException(
                     "Transaction does not belong to this kirana"
             );
@@ -157,7 +169,7 @@ public class TransactionService {
         for (TransactionItem item : items) {
 
             Product product = productDao
-                    .findByIdAndKiraanaId(item.getProductId(), kiraanaId)
+                    .findByIdAndKiranaId(item.getProductId(), kiranaId)
                     .orElseThrow(() ->
                             new IllegalStateException("Product not found for refund")
                     );
@@ -176,11 +188,9 @@ public class TransactionService {
 
         // 5️⃣ Create refund transaction
         Transaction refundTx = new Transaction();
-        refundTx.setKiraanaId(kiraanaId);
+        refundTx.setKiranaId(kiranaId);
         refundTx.setUserId(originalTx.getUserId());
         refundTx.setType(TransactionType.REFUND);
-//        refundTx.setCurrency(originalTx.getCurrency());
-//        refundTx.setExchangeRate(originalTx.getExchangeRate());
         refundTx.setTotalAmount(originalTx.getTotalAmount() * -1);
         refundTx.setOriginalTransactionId(originalTransactionId);
         refundTx.setCompleted(true);

@@ -8,6 +8,6 @@ import java.util.List;
 
 
 @Repository
-public interface TransactionItemRepository extends JpaRepository<TransactionItem,Long> {
-    List<TransactionItem> findByTransactionId(Long transactionId);
+public interface TransactionItemRepository extends JpaRepository<TransactionItem,String> {
+    List<TransactionItem> findByTransactionId(String transactionId);
 }
